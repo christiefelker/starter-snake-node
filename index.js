@@ -20,8 +20,8 @@ function handleIndex(request, response) {
     apiversion: '1',
     author: 'Christie Kennedy',
     color: '#ae1fc1',
-    head: 'silly',
-    tail: 'bolt'
+    head: 'smile',
+    tail: 'hook'
   }
   response.status(200).json(battlesnakeInfo)
 }

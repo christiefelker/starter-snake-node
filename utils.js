@@ -22,7 +22,7 @@ const utils = {
     },
     getValidMoves: (gameState, { x, y }) => {
         let moves = getMoveCoords({ x, y })
-    
+
         // return only moves that are safe
         return Object.keys(moves).reduce((acc, move) => {
             if (isSafe(gameState, moves[move])) acc[move] = moves[move];
@@ -31,10 +31,12 @@ const utils = {
     },
     chooseMove: (gameState, { x, y }) => {
         let validMoves = getValidMoves(gameState, { x, y })
-    
+
         // Move somewhere if we don't have a choice :(
         if (Object.keys(validMoves).length === 0) return randomizeMove(['right', 'left', 'up', 'down'])
-    
+
         return randomizeMove(Object.keys(validMoves));
     }
 }
+
+module.exports = utils;
