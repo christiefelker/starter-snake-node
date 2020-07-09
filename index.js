@@ -1,5 +1,6 @@
-const bodyParser = require('body-parser')
-const express = require('express')
+const bodyParser = require('body-parser');
+const express = require('express');
+const utils = require('./utils');
 
 const PORT = process.env.PORT || 3000
 
@@ -27,7 +28,6 @@ function handleIndex(request, response) {
 
 function handleStart(request, response) {
   var gameData = request.body
-  console.log(gameData)
 
   console.log('START')
   response.status(200).send('ok')
@@ -36,8 +36,7 @@ function handleStart(request, response) {
 function handleMove(request, response) {
   var gameData = request.body
 
-  var possibleMoves = ['up', 'down', 'left', 'right']
-  var move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
+  var move = utils.chooseMove(gameData, gameData.head)
 
   console.log('MOVE: ' + move)
   response.status(200).send({
