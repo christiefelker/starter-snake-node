@@ -36,7 +36,7 @@ function handleStart(request, response) {
 function handleMove(request, response) {
   var gameData = request.body
 
-  var move = utils.chooseMove(gameData, gameData.head)
+  var move = utils.chooseMove(gameData.board, gameData.you.head)
 
   console.log('MOVE: ' + move)
   response.status(200).send({
