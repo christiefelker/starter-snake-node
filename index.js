@@ -17,16 +17,17 @@ app.listen(PORT, () => console.log(`Battlesnake Server listening at http://127.0
 function handleIndex(request, response) {
   var battlesnakeInfo = {
     apiversion: '1',
-    author: '',
-    color: '#888888',
-    head: 'default',
-    tail: 'default'
+    author: 'Christie Kennedy',
+    color: '#ae1fc1',
+    head: 'silly',
+    tail: 'bolt'
   }
   response.status(200).json(battlesnakeInfo)
 }
 
 function handleStart(request, response) {
   var gameData = request.body
+  console.log(gameData)
 
   console.log('START')
   response.status(200).send('ok')
