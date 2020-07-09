@@ -17,25 +17,26 @@ const utils = {
         if (moveCoord.x < 0 || moveCoord.x >= width) return false;
         if (moveCoord.y < 0 || moveCoord.y >= height) return false;
 
+        return true;
         // TODO: get the coordinates for the snake body, check if collision
 
     },
     getValidMoves: (gameBoard, { x, y }) => {
-        let moves = getMoveCoords({ x, y })
+        let moves = utils.getMoveCoords({ x, y })
 
         // return only moves that are safe
         return Object.keys(moves).reduce((acc, move) => {
-            if (isSafe(gameBoard, moves[move])) acc[move] = moves[move];
+            if (utils.isSafe(gameBoard, moves[move])) acc[move] = moves[move];
             return acc;
         }, {});
     },
     chooseMove: (gameBoard, { x, y }) => {
-        let validMoves = getValidMoves(gameBoard, { x, y })
+        let validMoves = utils.getValidMoves(gameBoard, { x, y })
 
         // Move somewhere if we don't have a choice :(
-        if (Object.keys(validMoves).length === 0) return randomizeMove(['right', 'left', 'up', 'down'])
+        if (Object.keys(validMoves).length === 0) return utils.randomizeMove(['right', 'left', 'up', 'down'])
 
-        return randomizeMove(Object.keys(validMoves));
+        return utils.randomizeMove(Object.keys(validMoves));
     }
 }
 
