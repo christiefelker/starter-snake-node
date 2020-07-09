@@ -11,15 +11,22 @@ const utils = {
         }
     },
     isSafe: (gameBoard, moveCoord) => {
-        // walls
+        // check for walls
         let height = gameBoard.height;
         let width = gameBoard.width;
         if (moveCoord.x < 0 || moveCoord.x >= width) return false;
         if (moveCoord.y < 0 || moveCoord.y >= height) return false;
 
-        return true;
-        // TODO: get the coordinates for the snake body, check if collision
-
+        // check for snakes
+        // TODO: eventually we may want to make a different decision based on running into the head of a snake
+        let empty = true;
+        let snakes = gameBoard.snakes
+        empty = snakes.every((snake) => {
+            return snake.body.every((coord) => {
+                return coord.x !== moveCoord.x && coord.y !== moveCoord.y
+            });
+        });
+        return empty;
     },
     getValidMoves: (gameBoard, { x, y }) => {
         let moves = utils.getMoveCoords({ x, y })
