@@ -20,12 +20,15 @@ const utils = {
         // check for snakes
         // TODO: eventually we may want to make a different decision based on running into the head of a snake
         let empty = true;
-        let snakes = gameBoard.snakes
+        let snakes = gameBoard.snakes;
         empty = snakes.every((snake) => {
+            console.log(snake)
             return snake.body.every((coord) => {
-                return coord.x !== moveCoord.x && coord.y !== moveCoord.y
+                console.log(coord)
+                return (coord.x !== moveCoord.x) && (coord.y !== moveCoord.y);
             });
         });
+        console.log(empty)
         return empty;
     },
     getValidMoves: (gameBoard, { x, y }) => {
