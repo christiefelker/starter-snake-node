@@ -25,7 +25,7 @@ const utils = {
             console.log(snake)
             return snake.body.every((coord) => {
                 console.log(coord)
-                return (coord.x !== moveCoord.x) && (coord.y !== moveCoord.y);
+                return (coord.x !== moveCoord.x) || (coord.y !== moveCoord.y);
             });
         });
         console.log(empty)
