@@ -1,6 +1,6 @@
 const bodyParser = require('body-parser');
 const express = require('express');
-const utils = require('./utils');
+const utils = require('./utils.js');
 
 const PORT = process.env.PORT || 3000
 
