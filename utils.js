@@ -6,23 +6,18 @@ const DIRECTIONS = {
 }
 
 const utils = {
-    randomizeMove: (choices) => {
+    randomize: (choices) => {
         return choices[Math.floor(Math.random() * choices.length)];
     },
-    getMoveCoords: ({ x, y }) => {
-        return {
-            right: { x: x + 1, y: y },
-            left: { x: x - 1, y: y },
-            up: { x: x, y: y + 1 },
-            down: { x: x, y: y - 1 }
-        }
+    trapped: () => {
+        return utils.randomize(['right', 'left', 'up', 'down']);
     },
-    isSafe: (gameBoard, moveCoord) => {
+    isMoveSafe: (gameBoard, move) => {
         // check for walls
         let height = gameBoard.height;
         let width = gameBoard.width;
-        if (moveCoord.x < 0 || moveCoord.x >= width) return false;
-        if (moveCoord.y < 0 || moveCoord.y >= height) return false;
+        if (move.x < 0 || move.x >= width) return false;
+        if (move.y < 0 || move.y >= height) return false;
 
         // check for snakes
         // TODO: eventually we may want to make a different decision based on running into the head of a snake
@@ -30,50 +25,55 @@ const utils = {
         let snakes = gameBoard.snakes;
         empty = snakes.every((snake) => {
             return snake.body.every((coord) => {
-                return (coord.x !== moveCoord.x) || (coord.y !== moveCoord.y);
+                return (coord.x !== move.x) || (coord.y !== move.y);
             });
         });
         return empty;
     },
-    getValidMoves: (gameBoard, { x, y }) => {
-        let moves = utils.getMoveCoords({ x, y })
-
-        // return only moves that are safe
-        return Object.keys(moves).reduce((acc, move) => {
-            if (utils.isSafe(gameBoard, moves[move])) acc[move] = moves[move];
-            return acc;
-        }, {});
-    },
-    idleMove: (me, { x, y }, validMoves) => {
-        // Move the snake in an idle pattern (move to wall or until unsafe, turn)
-
-        // Check what direction we are moving
-        let { x: bodyX, y: bodyY } = me.body[1];
-        let currDir = { x: x - bodyX, y: y - bodyY };
+    getDirection: (oldCoord, newCoord) => {
+        let coordChange = { x: newCoord.x - oldCoord.x, y: newCoord.y - oldCoord.y };
 
         let direction;
-        for (var dir in DIRECTIONS) { //TODO: I'm not super happy with this
-            if (currDir.x === DIRECTIONS[dir].x && currDir.y === DIRECTIONS[dir].y) {
+        for (var dir in DIRECTIONS) {
+            if (coordChange.x === DIRECTIONS[dir].x && coordChange.y === DIRECTIONS[dir].y) {
                 direction = dir;
                 break;
             }
         }
+        return direction;
+    },
+    getAllMoves: ({ x, y }) => {
+        return [{ x: x + 1, y: y }, { x: x - 1, y: y }, { x: x, y: y + 1 }, { x: x, y: y - 1 }]
+    },
+    getForwardMove: (me) => {
+        let head = me.head
+        let { x: bodyX, y: bodyY } = me.body[1];
+        let coordChange = { x: head.x - bodyX, y: head.y - bodyY };
+        return { x: head.x + coordChange.x, y: head.y + coordChange.y };
+    },
+    getValidMoves: (gameBoard, { x, y }) => {
+        let moves = utils.getAllMoves({ x, y })
 
-        // Check if it is valid to continue that direction
-        if (Object.keys(validMoves).includes(direction)) return direction;
-
-        // Otherwise, pick a random valid direction
-        return utils.randomizeMove(Object.keys(validMoves));
+        // return only moves that are safe
+        return moves.reduce((acc, move) => {
+            if (utils.isMoveSafe(gameBoard, move)) acc.push(move);
+            return acc;
+        }, []);
+    },
+    idleMove: (gameBoard, me, validMoves) => {
+        // Move the forward until it is unsafe to do so, then turn
+        let forwardMove = utils.getForwardMove(me)
+        if (utils.isMoveSafe(gameBoard, forwardMove)) return forwardMove;
+        return utils.randomize(validMoves);
     },
     chooseMove: (gameBoard, me) => {
-        // TODO: chooseMove will eventually decide which type of move to make
-        let head = me.head;
-        let validMoves = utils.getValidMoves(gameBoard, head);
+        let validMoves = utils.getValidMoves(gameBoard, me.head);
 
         // Move somewhere if we don't have a choice :(
-        if (Object.keys(validMoves).length === 0) return utils.randomizeMove(['right', 'left', 'up', 'down']);
+        if (validMoves.length === 0) return utils.trapped();
 
-        return utils.idleMove(me, head, validMoves);
+        let move = utils.idleMove(gameBoard, me, validMoves); //TODO: make a better decision about type of move
+        return utils.getDirection(me.head, move);
     }
 }
 
