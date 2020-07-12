@@ -60,7 +60,7 @@ const utils = {
         }
 
         // Check if it is valid to continue that direction
-        if (validMoves.includes(direction)) return direction;
+        if (Object.keys(validMoves).includes(direction)) return direction;
 
         // Otherwise, pick a random valid direction
         return utils.randomizeMove(Object.keys(validMoves));
